@@ -35,7 +35,7 @@ Only files without outputs proceed to Phases B and C. If all files of a given ty
 
 ### Phase B — Process screenshots
 
-For each screenshot, launch a Task subagent (to keep images out of your context). Launch all screenshot subagents in parallel in a single response. Each skill takes a single argument: the file path. Do not pass any other text in the argument.
+For each screenshot, launch a subagent (to keep images out of your context). Launch subagents in parallel. Each skill takes a single argument: the file path. Do not pass any other text in the argument.
 
 ```
 Task(
@@ -43,8 +43,6 @@ Task(
   prompt="Use the Skill tool to invoke the image-to-html skill with argument: screenshots/example.png"
 )
 ```
-
-Wait for all screenshot subagents to return before continuing.
 
 ### Phase C — Process transcripts
 

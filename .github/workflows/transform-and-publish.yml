@@ -1,0 +1,46 @@
+name: Transform and Publish Copilot Plugin
+
+on:
+  push:
+    branches: [main, 'feature/**', 'fix/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  transform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Run transformation
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+        run: |
+          chmod +x scripts/transform.sh
+          bash scripts/transform.sh "output/.github"
+
+      - name: Run validation
+        run: |
+          chmod +x scripts/validate.sh
+          bash scripts/validate.sh "output/.github"
+
+      - name: Package artifact
+        run: |
+          cd output
+          zip -r ../copilot-plugin.zip .github/
+          cd ..
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: copilot-plugin
+          path: copilot-plugin.zip
